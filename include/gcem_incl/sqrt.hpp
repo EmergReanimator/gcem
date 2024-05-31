@@ -87,8 +87,94 @@ noexcept
             sqrt_simplify(x, T(1)) );
 }
 
+} /* internal */
+
+
+namespace embedded
+{
+
+template<typename T>
+constexpr
+T
+sqrt_iter(const T x)
+noexcept
+{
+    T xn = x / T(2);
+    for (int count = 0; count < GCEM_SQRT_MAX_ITER; ++count)
+    {
+        T next_xn = T(0.5)*(xn + x/xn);
+        if (abs(xn - x/next_xn) / (T(1) + xn) < GCLIM<T>::min())
+        {
+            break;
+        }
+        xn = next_xn;
+    }
+    return xn;
 }
 
+template<typename T>
+constexpr
+T
+sqrt_simplify_iter(const T x)
+noexcept
+{
+    T m_val = T(1);
+    T x_val = x;
+    while (x_val > T(4))
+    {
+        if (x_val > T(1e+08))
+        {
+            x_val /= T(1e+08);
+            m_val *= T(1e+04);
+        }
+        else if (x_val > T(1e+06))
+        {
+            x_val /= T(1e+06);
+            m_val *= T(1e+03);
+        }
+        else if (x_val > T(1e+04))
+        {
+            x_val /= T(1e+04);
+            m_val *= T(1e+02);
+        }
+        else if (x_val > T(100))
+        {
+            x_val /= T(100);
+            m_val *= T(10);
+        }
+        else if (x_val > T(4))
+        {
+            x_val /= T(4);
+            m_val *= T(2);
+        }
+    }
+    return m_val * sqrt_iter(x_val);
+}
+
+template<typename T>
+constexpr
+T
+sqrt_check(const T x)
+noexcept
+{
+    return( internal::is_nan(x) ? \
+                GCLIM<T>::quiet_NaN() :
+            //
+            x < T(0) ? \
+                GCLIM<T>::quiet_NaN() :
+            //
+            internal::is_posinf(x) ? \
+                x :
+            // indistinguishable from zero or one
+            GCLIM<T>::min() > abs(x) ? \
+                T(0) :
+            GCLIM<T>::min() > abs(T(1) - x) ? \
+                x :
+            // else
+            sqrt_simplify_iter(x) );
+}
+
+} /* embedded */
 
 /**
  * Compile-time square-root function
@@ -103,7 +189,14 @@ return_t<T>
 sqrt(const T x)
 noexcept
 {
-    return internal::sqrt_check( static_cast<return_t<T>>(x) );
+#if defined(__cpp_lib_is_constant_evaluated)
+    if (std::is_constant_evaluated())
+        return internal::sqrt_check( static_cast<return_t<T>>(x) );
+    else
+        return embedded::sqrt_check( static_cast<return_t<T>>(x) );
+#else
+    return embedded::sqrt_check( static_cast<return_t<T>>(x) );
+#endif
 }
 
 #endif
