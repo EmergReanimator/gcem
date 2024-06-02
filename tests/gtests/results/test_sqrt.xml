@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="0" timestamp="2024-06-02T13:21:47.021" name="AllTests">
+  <testsuite name="test_sqrt" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0" timestamp="2024-06-02T13:21:47.022">
+    <testcase name="long_double_0_5" file="test_sqrt.cpp" line="39" status="run" result="completed" time="0" timestamp="2024-06-02T13:21:47.022" classname="test_sqrt">
+      <failure message="test_sqrt.cpp:47&#x0A;Expected equality of these values:&#x0A;  y&#x0A;    Which is: 0.70710678118654752438&#x0A;  ref&#x0A;    Which is: 0.70710678118654752438" type=""><![CDATA[test_sqrt.cpp:47
+Expected equality of these values:
+  y
+    Which is: 0.70710678118654752438
+  ref
+    Which is: 0.70710678118654752438]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>
