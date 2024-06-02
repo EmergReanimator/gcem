@@ -25,8 +25,10 @@
 
 #include "gcem_tests.hpp"
 
-int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv)
+int main(int argc, char **argv)
 {
+    (void)argc; (void)argv;
+
     print_begin("sqrt");
 
     //
