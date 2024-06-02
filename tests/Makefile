@@ -20,6 +20,10 @@ ifneq ($(TRAVIS_CLANG_BUILD),)
 	OPT_FLAGS += -DTRAVIS_CLANG_CXX
 endif
 
+ifeq ($(LIBS),)
+	LIBS = -lm
+endif
+
 # source directories
 SDIR = .
 HEADER_DIR = $(SDIR)/../include

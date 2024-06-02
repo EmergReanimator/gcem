@@ -94,7 +94,6 @@ namespace embedded
 {
 
 template<typename T>
-constexpr
 T
 sqrt_iter(const T x)
 noexcept
@@ -113,7 +112,6 @@ noexcept
 }
 
 template<typename T>
-constexpr
 T
 sqrt_simplify_iter(const T x)
 noexcept
@@ -152,7 +150,6 @@ noexcept
 }
 
 template<typename T>
-constexpr
 T
 sqrt_check(const T x)
 noexcept
@@ -183,20 +180,29 @@ noexcept
  * @return Computes \f$ \sqrt{x} \f$ using a Newton-Raphson approach.
  */
 
+#if defined(__cpp_lib_is_constant_evaluated)
 template<typename T>
 constexpr
 return_t<T>
 sqrt(const T x)
 noexcept
 {
-#if defined(__cpp_lib_is_constant_evaluated)
     if (std::is_constant_evaluated())
         return internal::sqrt_check( static_cast<return_t<T>>(x) );
     else
         return embedded::sqrt_check( static_cast<return_t<T>>(x) );
-#else
-    return embedded::sqrt_check( static_cast<return_t<T>>(x) );
-#endif
 }
+
+#else
+template<typename T>
+static inline
+return_t<T>
+sqrt(const T x)
+noexcept
+{
+    return embedded::sqrt_check( static_cast<return_t<T>>(x) );
+}
+
+#endif /* __cpp_lib_is_constant_evaluated */
 
 #endif
